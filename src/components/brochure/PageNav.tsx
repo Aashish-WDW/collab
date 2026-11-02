@@ -21,7 +21,7 @@ export function PageNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const go = (i: number) => document.getElementById(sections[i].id)?.scrollIntoView({ behavior: "smooth" });
+  const go = (i: number) => document.getElementById(sections[i]?.id ?? "")?.scrollIntoView({ behavior: "smooth" });
   const prev = idx > 0 ? sections[idx - 1] : null;
   const next = idx < sections.length - 1 ? sections[idx + 1] : null;
   const pill = "pill-glass flex h-11 min-w-0 items-center rounded-full px-3 text-xs font-medium";
@@ -37,7 +37,7 @@ export function PageNav() {
         )}
       </div>
       <div className={`${pill} shrink-0 justify-center border border-sunset/60 px-4 font-serif text-sm italic text-sunset`} aria-live="polite">
-        {sections[idx].title}
+        {sections[idx]?.title}
       </div>
       <div className="flex flex-1 justify-end">
         {next && (
