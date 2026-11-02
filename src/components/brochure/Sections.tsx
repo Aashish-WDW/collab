@@ -184,7 +184,7 @@ export function Events() {
         </Reveal>
         <div className="mt-14 grid auto-rows-[160px] grid-cols-2 gap-3 md:auto-rows-[180px] md:grid-cols-6">
           {e.images.map((src, i) => (
-            <Photo key={src} src={src} alt={e.alts[i]} className={`h-full w-full rounded-xl ${i === 0 ? "col-span-2 row-span-2" : ""} ${spans[i]}`} />
+            <Photo key={src} src={src} alt={e.alts[i] ?? ""} className={`h-full w-full rounded-xl ${i === 0 ? "col-span-2 row-span-2" : ""} ${spans[i]}`} />
           ))}
         </div>
       </div>
