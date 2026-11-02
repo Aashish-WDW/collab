@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { content as c, waLink } from "@/content/content";
+import { useEffect, useState, type MouseEvent } from "react";
+import { content as c, sections, waLink } from "@/content/content";
+import { goToSection, useActiveSection } from "./PageNav";
 import { CurationMark, Icon, Logo, Photo, Reveal, Tag } from "./ui";
 
 const wrap = "mx-auto w-full max-w-[1100px] px-6 md:px-10";
@@ -12,16 +13,20 @@ export function Header() {
     window.addEventListener("scroll", f, { passive: true });
     return () => window.removeEventListener("scroll", f);
   }, []);
+  const active = sections[useActiveSection()]?.id;
+  const ring = "rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset focus-visible:ring-offset-2 focus-visible:ring-offset-ink";
+  const jump = (id: string) => (e: MouseEvent) => { e.preventDefault(); goToSection(id); };
   return (
     <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${solid ? "bg-ink/95 backdrop-blur" : "bg-gradient-to-b from-ink/70 to-transparent"}`}>
       <div className={`${wrap} flex h-16 items-center justify-between text-paper`}>
-        <a href="#home" className="shrink-0"><Logo /></a>
-        <nav className="hidden items-center gap-6 text-sm lg:flex">
+        <a href="#home" onClick={jump("home")} aria-label="GoLookAround, back to top" className={`shrink-0 px-1 ${ring}`}><Logo /></a>
+        <nav aria-label="Sections" className="hidden items-center gap-2 text-sm lg:flex">
           {[["about", "About"], ["experiences", "Experiences"], ["retreats", "Retreats"], ["events", "Events"], ["for-organizations", "Organizations"], ["partners", "Partners"]].map(([id, t]) => (
-            <a key={id} href={`#${id}`} className="opacity-85 hover:opacity-100">{t}</a>
+            <a key={id} href={`#${id}`} onClick={jump(id ?? "")} aria-current={active === id ? "location" : undefined}
+              className={`px-3 py-2 transition-opacity aria-[current]:text-sunset aria-[current]:opacity-100 ${active === id ? "" : "opacity-85 hover:opacity-100"} ${ring}`}>{t}</a>
           ))}
         </nav>
-        <a href={waLink(c.messages.customer)} target="_blank" rel="noreferrer" className="shrink-0 whitespace-nowrap rounded-full bg-sunset px-4 py-2 text-sm font-semibold text-ink">
+        <a href={waLink(c.messages.customer)} target="_blank" rel="noreferrer" aria-label="Talk to us on WhatsApp (opens in a new tab)" className="shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-2 focus-visible:ring-offset-ink rounded-full bg-sunset px-4 py-2 text-sm font-semibold text-ink">
           Talk to us
         </a>
       </div>
@@ -31,14 +36,14 @@ export function Header() {
 
 export function Hero() {
   return (
-    <section id="home" className="relative flex min-h-[100svh] items-end overflow-hidden bg-ink text-paper">
+    <section id="home" aria-label="Home" className="scroll-mt-16 focus:outline-none relative flex min-h-[100svh] items-end overflow-hidden bg-ink text-paper">
       <Photo src={c.hero.image} alt={c.hero.alt} eager className="absolute inset-0 h-full w-full" />
       <div className="absolute inset-0 bg-overlay" />
       <div className={`${wrap} relative pb-28 md:pb-24`}>
         <h1 className="h-display max-w-3xl font-medium">{c.hero.tagline}</h1>
         <p className="mt-5 max-w-xl text-lg text-paper/85">{c.hero.sub}</p>
-        <a href="#about" className="mt-10 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-paper/70">
-          <span className="h-8 w-px animate-pulse bg-sunset" /> Scroll
+        <a href="#about" onClick={(e) => { e.preventDefault(); goToSection("about"); }} aria-label="Scroll to About us" className="mt-10 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-paper/70">
+          <span aria-hidden="true" className="h-8 w-px animate-pulse bg-sunset" /> Scroll
         </a>
       </div>
     </section>
@@ -47,7 +52,7 @@ export function Hero() {
 
 export function About() {
   return (
-    <section id="about" className="py-20 md:py-32">
+    <section id="about" aria-label="About us" className="scroll-mt-16 focus:outline-none py-20 md:py-32">
       <div className={`${wrap} grid items-center gap-10 md:grid-cols-2 md:gap-16`}>
         <Reveal><Photo src={c.about.image} alt={c.about.alt} className="aspect-[4/5] w-full rounded-2xl" /></Reveal>
         <Reveal delay={100}>
@@ -66,7 +71,7 @@ export function About() {
 export function Difference() {
   const d = c.difference;
   return (
-    <section id="difference" className="bg-paper py-20 md:py-32">
+    <section id="difference" aria-label="Our difference" className="scroll-mt-16 focus:outline-none bg-paper py-20 md:py-32">
       <div className={wrap}>
         <Reveal className="max-w-3xl">
           <p className="label-eyebrow">{d.label}</p>
@@ -105,6 +110,9 @@ function Gallery({ images, alt }: { images: string[]; alt: string }) {
   return (
     <div className="relative">
       <div
+        tabIndex={0}
+        role="region"
+        aria-label={`${alt} photos, ${images.length} image${images.length > 1 ? "s" : ""}. Use arrow keys to scroll.`}
         className="flex snap-x snap-mandatory overflow-x-auto rounded-2xl [scrollbar-width:none]"
         onScroll={(e) => setI(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
       >
@@ -114,7 +122,7 @@ function Gallery({ images, alt }: { images: string[]; alt: string }) {
       </div>
       <CurationMark size={68} className="absolute right-4 top-4 text-paper/90" />
       {images.length > 1 && (
-        <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
           {images.map((_, k) => <span key={k} className={`h-1.5 rounded-full transition-all ${k === i ? "w-5 bg-sunset" : "w-1.5 bg-paper/60"}`} />)}
         </div>
       )}
@@ -125,7 +133,7 @@ function Gallery({ images, alt }: { images: string[]; alt: string }) {
 export function Experiences() {
   const e = c.experiences;
   return (
-    <section id="experiences" className="bg-ink py-20 text-paper md:py-32">
+    <section id="experiences" aria-label="Experiences" className="scroll-mt-16 focus:outline-none bg-ink py-20 text-paper md:py-32">
       <div className={wrap}>
         <Reveal className="max-w-3xl">
           <p className="label-eyebrow">{e.label}</p>
@@ -162,7 +170,7 @@ export function Experiences() {
 export function Retreats() {
   const r = c.retreats;
   return (
-    <section id="retreats" className="bg-cream">
+    <section id="retreats" aria-label="Retreats" className="scroll-mt-16 focus:outline-none bg-cream">
       <Photo src={r.image} alt={r.alt} className="h-[55vh] w-full md:h-[75vh]" />
       <div className={`${wrap} -mt-20 pb-24 md:-mt-32`}>
         <Reveal className="relative mx-auto max-w-2xl rounded-3xl bg-cream p-8 md:p-14">
@@ -180,7 +188,7 @@ export function Events() {
   const e = c.events;
   const spans = ["md:col-span-4 md:row-span-2", "md:col-span-2 md:row-span-2", "md:col-span-2", "md:col-span-2", "md:col-span-2"];
   return (
-    <section id="events" className="bg-paper pt-20 md:pt-32">
+    <section id="events" aria-label="Events" className="scroll-mt-16 focus:outline-none bg-paper pt-20 md:pt-32">
       <div className={wrap}>
         <Reveal className="max-w-3xl">
           <p className="label-eyebrow">{e.label}</p>
@@ -205,7 +213,7 @@ export function Events() {
 export function Organizations() {
   const o = c.organizations;
   return (
-    <section id="for-organizations" className="py-20 md:py-32">
+    <section id="for-organizations" aria-label="For organizations" className="scroll-mt-16 focus:outline-none py-20 md:py-32">
       <div className={wrap}>
         <Photo src={o.teamImage} alt={o.teamAlt} className="aspect-[16/9] w-full rounded-3xl" />
         <Reveal className="mt-14 max-w-3xl">
@@ -242,7 +250,7 @@ export function Organizations() {
       <div className={`${wrap} mt-20`}>
         <div className="flex flex-col items-start gap-6 rounded-3xl bg-sunset p-8 md:flex-row md:items-center md:justify-between md:p-12">
           <p className="max-w-xl font-serif text-2xl text-ink md:text-3xl">{o.cta}</p>
-          <a href={waLink(c.messages.organization)} target="_blank" rel="noreferrer" className="shrink-0 rounded-full bg-ink px-6 py-3 font-semibold text-paper">
+          <a href={waLink(c.messages.organization)} target="_blank" rel="noreferrer" aria-label={`${o.ctaButton} on WhatsApp (opens in a new tab)`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-sunset shrink-0 rounded-full bg-ink px-6 py-3 font-semibold text-paper">
             {o.ctaButton}
           </a>
         </div>
@@ -254,7 +262,7 @@ export function Organizations() {
 export function Partners() {
   const p = c.partners;
   return (
-    <section id="partners" className="bg-paper pt-20 md:pt-32">
+    <section id="partners" aria-label="Our partners" className="scroll-mt-16 focus:outline-none bg-paper pt-20 md:pt-32">
       <div className={`${wrap} grid gap-14 md:grid-cols-2`}>
         <Reveal>
           <p className="label-eyebrow">{p.label}</p>
@@ -291,7 +299,7 @@ export function Closing() {
     ct.instagram && { label: ct.instagram, href: `https://instagram.com/${ct.instagram.replace("@", "")}` },
   ].filter(Boolean) as { label: string; href: string }[];
   return (
-    <section id="contact" className="relative overflow-hidden bg-ink text-paper">
+    <section id="contact" aria-label="Contact" className="scroll-mt-16 focus:outline-none relative overflow-hidden bg-ink text-paper">
       <Photo src={k.image} alt={k.alt} className="absolute inset-0 h-full w-full" />
       <div className="absolute inset-0 bg-ink/70" />
       <div className={`${wrap} relative py-24 pb-32 md:py-36`}>
@@ -300,11 +308,11 @@ export function Closing() {
         <p className="mt-5 max-w-xl text-lg text-paper/80">{k.sub}</p>
         <div className="mt-14 grid gap-4 md:grid-cols-3">
           {k.cards.map((x) => (
-            <a key={x.title} href={waLink(c.messages[x.msg])} target="_blank" rel="noreferrer"
-              className="group rounded-2xl border border-paper/20 bg-ink/50 p-7 backdrop-blur transition hover:border-sunset">
+            <a key={x.title} href={waLink(c.messages[x.msg])} target="_blank" rel="noreferrer" aria-label={`${x.title} ${x.text} Talk to us on WhatsApp (opens in a new tab)`}
+              className="group rounded-2xl border border-paper/20 bg-ink/50 p-7 backdrop-blur transition hover:border-sunset focus-visible:border-sunset focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset">
               <h3 className="text-2xl">{x.title}</h3>
               <p className="mt-2 text-sm text-paper/70">{x.text}</p>
-              <span className="mt-6 inline-block text-sm font-semibold text-sunset">Talk to us on WhatsApp →</span>
+              <span aria-hidden="true" className="mt-6 inline-block text-sm font-semibold text-sunset">Talk to us on WhatsApp →</span>
             </a>
           ))}
         </div>
