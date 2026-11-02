@@ -22,7 +22,7 @@ export function Header() {
         <a href="#home" onClick={jump("home")} aria-label="GoLookAround, back to top" className={`shrink-0 px-1 ${ring}`}><Logo /></a>
         <nav aria-label="Sections" className="hidden items-center gap-2 text-sm lg:flex">
           {[["about", "About"], ["experiences", "Experiences"], ["retreats", "Retreats"], ["events", "Events"], ["for-organizations", "Organizations"], ["partners", "Partners"]].map(([id, t]) => (
-            <a key={id} href={`#${id}`} onClick={jump(id)} aria-current={active === id ? "location" : undefined}
+            <a key={id} href={`#${id}`} onClick={jump(id ?? "")} aria-current={active === id ? "location" : undefined}
               className={`px-3 py-2 transition-opacity aria-[current]:text-sunset aria-[current]:opacity-100 ${active === id ? "" : "opacity-85 hover:opacity-100"} ${ring}`}>{t}</a>
           ))}
         </nav>
