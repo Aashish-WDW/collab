@@ -1,20 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { content as c, waLink } from "@/content/content";
 import { CurationMark, Icon, Logo, Photo, Reveal, Tag } from "./ui";
 
 const wrap = "mx-auto w-full max-w-[1100px] px-6 md:px-10";
 
 export function Header() {
+  const [solid, setSolid] = useState(false);
+  useEffect(() => {
+    const f = () => setSolid(window.scrollY > window.innerHeight * 0.6);
+    f();
+    window.addEventListener("scroll", f, { passive: true });
+    return () => window.removeEventListener("scroll", f);
+  }, []);
   return (
-    <header className="fixed inset-x-0 top-0 z-40 bg-gradient-to-b from-ink/70 to-transparent">
+    <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${solid ? "bg-ink/95 backdrop-blur" : "bg-gradient-to-b from-ink/70 to-transparent"}`}>
       <div className={`${wrap} flex h-16 items-center justify-between text-paper`}>
-        <a href="#home"><Logo /></a>
-        <nav className="hidden items-center gap-6 text-sm md:flex">
+        <a href="#home" className="shrink-0"><Logo /></a>
+        <nav className="hidden items-center gap-6 text-sm lg:flex">
           {[["about", "About"], ["experiences", "Experiences"], ["retreats", "Retreats"], ["events", "Events"], ["for-organizations", "Organizations"], ["partners", "Partners"]].map(([id, t]) => (
             <a key={id} href={`#${id}`} className="opacity-85 hover:opacity-100">{t}</a>
           ))}
         </nav>
-        <a href={waLink(c.messages.customer)} target="_blank" rel="noreferrer" className="rounded-full bg-sunset px-4 py-2 text-sm font-semibold text-ink">
+        <a href={waLink(c.messages.customer)} target="_blank" rel="noreferrer" className="shrink-0 whitespace-nowrap rounded-full bg-sunset px-4 py-2 text-sm font-semibold text-ink">
           Talk to us
         </a>
       </div>
