@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { About, Closing, Difference, Events, Experiences, Header, Hero, Organizations, Partners, Retreats } from "@/components/brochure/Sections";
+import { About, Closing, Difference, Events, Experiences, PhotoGallery, Header, Hero, Organizations, Partners, Retreats, SiteFooter } from "@/components/brochure/Sections";
 import { PageNav } from "@/components/brochure/PageNav";
+import { Splash } from "@/components/brochure/ui";
 
 const title = "GoLookAround | Curated for the curious.";
 const description = "Handpicked experiences, retreats and events, chosen so you don't have to search.";
@@ -24,9 +25,10 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <>
-      <a href="#main" className="sr-only z-[60] rounded-full bg-sunset px-4 py-2 font-semibold text-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+      <a href="#main" className="sr-only z-[60] rounded-full bg-gradient-brand px-4 py-2 font-bold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Skip to content
       </a>
+      <Splash />
       <Header />
       <main id="main" tabIndex={-1} className="focus:outline-none">
         <Hero />
@@ -35,10 +37,12 @@ function Index() {
         <Experiences />
         <Retreats />
         <Events />
+        <PhotoGallery />
         <Organizations />
         <Partners />
         <Closing />
       </main>
+      <SiteFooter />
       <PageNav />
     </>
   );

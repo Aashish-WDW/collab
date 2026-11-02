@@ -38,19 +38,19 @@ export function PageNav() {
   const go = (i: number) => goToSection(sections[i]?.id ?? "");
   const prev = idx > 0 ? sections[idx - 1] : null;
   const next = idx < sections.length - 1 ? sections[idx + 1] : null;
-  const pill = "pill-glass min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset focus-visible:ring-offset-2 focus-visible:ring-offset-ink flex h-11 min-w-0 items-center rounded-full px-3 text-xs font-medium";
+  const pill = "pill-glass min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:ring-offset-2 focus-visible:ring-offset-ink flex h-11 min-w-0 items-center rounded-full px-3 text-xs font-semibold";
 
   return (
-    <nav aria-label="Section navigation" className="fixed inset-x-0 bottom-3 z-50 flex items-center justify-between gap-2 px-3 lg:hidden">
+    <nav aria-label="Section navigation" className="fixed inset-x-0 bottom-3 z-50 flex items-center justify-between gap-2 px-3 xl:hidden">
       <div className="flex flex-1 justify-start">
         {prev && (
           <button onClick={() => go(idx - 1)} className={`${pill} gap-1 pr-4`} aria-label={`Go to previous section: ${prev.title}`}>
-            <ChevronLeft aria-hidden="true" className="size-4 shrink-0 text-sunset" />
+            <ChevronLeft aria-hidden="true" className="size-4 shrink-0 text-brand-light" />
             <span className="truncate">{prev.title}</span>
           </button>
         )}
       </div>
-      <div className={`${pill} shrink-0 justify-center border border-sunset/60 px-4 font-serif text-sm italic text-sunset`} aria-live="polite" aria-atomic="true">
+      <div className={`${pill} shrink-0 justify-center border-brand-light/40 bg-gradient-brand px-4 text-sm font-semibold text-white`} aria-live="polite" aria-atomic="true">
         <span className="sr-only">Current section, {idx + 1} of {total}: </span>
         {sections[idx]?.title}
       </div>
@@ -58,7 +58,7 @@ export function PageNav() {
         {next && (
           <button onClick={() => go(idx + 1)} className={`${pill} gap-1 pl-4`} aria-label={`Go to next section: ${next.title}`}>
             <span className="truncate">{next.title}</span>
-            <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-sunset" />
+            <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-brand-light" />
           </button>
         )}
       </div>
