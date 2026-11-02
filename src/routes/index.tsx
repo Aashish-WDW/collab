@@ -24,8 +24,11 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <>
+      <a href="#main" className="sr-only z-[60] rounded-full bg-sunset px-4 py-2 font-semibold text-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+        Skip to content
+      </a>
       <Header />
-      <main>
+      <main id="main" tabIndex={-1} className="focus:outline-none">
         <Hero />
         <About />
         <Difference />

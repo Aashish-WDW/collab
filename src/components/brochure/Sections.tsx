@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { content as c, waLink } from "@/content/content";
+import { useEffect, useState, type MouseEvent } from "react";
+import { content as c, sections, waLink } from "@/content/content";
 import { goToSection, useActiveSection } from "./PageNav";
-import { sections } from "@/content/content";
 import { CurationMark, Icon, Logo, Photo, Reveal, Tag } from "./ui";
 
 const wrap = "mx-auto w-full max-w-[1100px] px-6 md:px-10";
@@ -16,7 +15,7 @@ export function Header() {
   }, []);
   const active = sections[useActiveSection()]?.id;
   const ring = "rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset focus-visible:ring-offset-2 focus-visible:ring-offset-ink";
-  const jump = (id: string) => (e: React.MouseEvent) => { e.preventDefault(); goToSection(id); };
+  const jump = (id: string) => (e: MouseEvent) => { e.preventDefault(); goToSection(id); };
   return (
     <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${solid ? "bg-ink/95 backdrop-blur" : "bg-gradient-to-b from-ink/70 to-transparent"}`}>
       <div className={`${wrap} flex h-16 items-center justify-between text-paper`}>
@@ -37,7 +36,7 @@ export function Header() {
 
 export function Hero() {
   return (
-    <section id="home" className="relative flex min-h-[100svh] items-end overflow-hidden bg-ink text-paper">
+    <section id="home" aria-label="Home" className="scroll-mt-16 focus:outline-none relative flex min-h-[100svh] items-end overflow-hidden bg-ink text-paper">
       <Photo src={c.hero.image} alt={c.hero.alt} eager className="absolute inset-0 h-full w-full" />
       <div className="absolute inset-0 bg-overlay" />
       <div className={`${wrap} relative pb-28 md:pb-24`}>
@@ -53,7 +52,7 @@ export function Hero() {
 
 export function About() {
   return (
-    <section id="about" className="py-20 md:py-32">
+    <section id="about" aria-label="About us" className="scroll-mt-16 focus:outline-none py-20 md:py-32">
       <div className={`${wrap} grid items-center gap-10 md:grid-cols-2 md:gap-16`}>
         <Reveal><Photo src={c.about.image} alt={c.about.alt} className="aspect-[4/5] w-full rounded-2xl" /></Reveal>
         <Reveal delay={100}>
@@ -72,7 +71,7 @@ export function About() {
 export function Difference() {
   const d = c.difference;
   return (
-    <section id="difference" className="bg-paper py-20 md:py-32">
+    <section id="difference" aria-label="Our difference" className="scroll-mt-16 focus:outline-none bg-paper py-20 md:py-32">
       <div className={wrap}>
         <Reveal className="max-w-3xl">
           <p className="label-eyebrow">{d.label}</p>
@@ -134,7 +133,7 @@ function Gallery({ images, alt }: { images: string[]; alt: string }) {
 export function Experiences() {
   const e = c.experiences;
   return (
-    <section id="experiences" className="bg-ink py-20 text-paper md:py-32">
+    <section id="experiences" aria-label="Experiences" className="scroll-mt-16 focus:outline-none bg-ink py-20 text-paper md:py-32">
       <div className={wrap}>
         <Reveal className="max-w-3xl">
           <p className="label-eyebrow">{e.label}</p>
@@ -171,7 +170,7 @@ export function Experiences() {
 export function Retreats() {
   const r = c.retreats;
   return (
-    <section id="retreats" className="bg-cream">
+    <section id="retreats" aria-label="Retreats" className="scroll-mt-16 focus:outline-none bg-cream">
       <Photo src={r.image} alt={r.alt} className="h-[55vh] w-full md:h-[75vh]" />
       <div className={`${wrap} -mt-20 pb-24 md:-mt-32`}>
         <Reveal className="relative mx-auto max-w-2xl rounded-3xl bg-cream p-8 md:p-14">
@@ -189,7 +188,7 @@ export function Events() {
   const e = c.events;
   const spans = ["md:col-span-4 md:row-span-2", "md:col-span-2 md:row-span-2", "md:col-span-2", "md:col-span-2", "md:col-span-2"];
   return (
-    <section id="events" className="bg-paper pt-20 md:pt-32">
+    <section id="events" aria-label="Events" className="scroll-mt-16 focus:outline-none bg-paper pt-20 md:pt-32">
       <div className={wrap}>
         <Reveal className="max-w-3xl">
           <p className="label-eyebrow">{e.label}</p>
@@ -214,7 +213,7 @@ export function Events() {
 export function Organizations() {
   const o = c.organizations;
   return (
-    <section id="for-organizations" className="py-20 md:py-32">
+    <section id="for-organizations" aria-label="For organizations" className="scroll-mt-16 focus:outline-none py-20 md:py-32">
       <div className={wrap}>
         <Photo src={o.teamImage} alt={o.teamAlt} className="aspect-[16/9] w-full rounded-3xl" />
         <Reveal className="mt-14 max-w-3xl">
@@ -263,7 +262,7 @@ export function Organizations() {
 export function Partners() {
   const p = c.partners;
   return (
-    <section id="partners" className="bg-paper pt-20 md:pt-32">
+    <section id="partners" aria-label="Our partners" className="scroll-mt-16 focus:outline-none bg-paper pt-20 md:pt-32">
       <div className={`${wrap} grid gap-14 md:grid-cols-2`}>
         <Reveal>
           <p className="label-eyebrow">{p.label}</p>
@@ -300,7 +299,7 @@ export function Closing() {
     ct.instagram && { label: ct.instagram, href: `https://instagram.com/${ct.instagram.replace("@", "")}` },
   ].filter(Boolean) as { label: string; href: string }[];
   return (
-    <section id="contact" className="relative overflow-hidden bg-ink text-paper">
+    <section id="contact" aria-label="Contact" className="scroll-mt-16 focus:outline-none relative overflow-hidden bg-ink text-paper">
       <Photo src={k.image} alt={k.alt} className="absolute inset-0 h-full w-full" />
       <div className="absolute inset-0 bg-ink/70" />
       <div className={`${wrap} relative py-24 pb-32 md:py-36`}>
