@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { sections } from "@/content/content";
 
-// Mobile-only floating pills: previous section, current label, next section.
+// Mobile and tablet floating pills: previous section, current label, next section.
 export function PageNav() {
   const [idx, setIdx] = useState(0);
 
@@ -27,7 +27,7 @@ export function PageNav() {
   const pill = "pill-glass flex h-11 min-w-0 items-center rounded-full px-3 text-xs font-medium";
 
   return (
-    <nav aria-label="Page navigation" className="fixed inset-x-0 bottom-3 z-50 flex items-center justify-between gap-2 px-3 md:hidden">
+    <nav aria-label="Page navigation" className="fixed inset-x-0 bottom-3 z-50 flex items-center justify-between gap-2 px-3 lg:hidden">
       <div className="flex flex-1 justify-start">
         {prev && (
           <button onClick={() => go(idx - 1)} className={`${pill} gap-1 pr-4`} aria-label={`Previous: ${prev.title}`}>
