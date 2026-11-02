@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { content as c, waLink } from "@/content/content";
+import { goToSection, useActiveSection } from "./PageNav";
+import { sections } from "@/content/content";
 import { CurationMark, Icon, Logo, Photo, Reveal, Tag } from "./ui";
 
 const wrap = "mx-auto w-full max-w-[1100px] px-6 md:px-10";
@@ -12,16 +14,20 @@ export function Header() {
     window.addEventListener("scroll", f, { passive: true });
     return () => window.removeEventListener("scroll", f);
   }, []);
+  const active = sections[useActiveSection()]?.id;
+  const ring = "rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset focus-visible:ring-offset-2 focus-visible:ring-offset-ink";
+  const jump = (id: string) => (e: React.MouseEvent) => { e.preventDefault(); goToSection(id); };
   return (
     <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${solid ? "bg-ink/95 backdrop-blur" : "bg-gradient-to-b from-ink/70 to-transparent"}`}>
       <div className={`${wrap} flex h-16 items-center justify-between text-paper`}>
-        <a href="#home" className="shrink-0"><Logo /></a>
-        <nav className="hidden items-center gap-6 text-sm lg:flex">
+        <a href="#home" onClick={jump("home")} aria-label="GoLookAround, back to top" className={`shrink-0 px-1 ${ring}`}><Logo /></a>
+        <nav aria-label="Sections" className="hidden items-center gap-2 text-sm lg:flex">
           {[["about", "About"], ["experiences", "Experiences"], ["retreats", "Retreats"], ["events", "Events"], ["for-organizations", "Organizations"], ["partners", "Partners"]].map(([id, t]) => (
-            <a key={id} href={`#${id}`} className="opacity-85 hover:opacity-100">{t}</a>
+            <a key={id} href={`#${id}`} onClick={jump(id)} aria-current={active === id ? "location" : undefined}
+              className={`px-3 py-2 transition-opacity aria-[current]:text-sunset aria-[current]:opacity-100 ${active === id ? "" : "opacity-85 hover:opacity-100"} ${ring}`}>{t}</a>
           ))}
         </nav>
-        <a href={waLink(c.messages.customer)} target="_blank" rel="noreferrer" className="shrink-0 whitespace-nowrap rounded-full bg-sunset px-4 py-2 text-sm font-semibold text-ink">
+        <a href={waLink(c.messages.customer)} target="_blank" rel="noreferrer" aria-label="Talk to us on WhatsApp (opens in a new tab)" className="shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-2 focus-visible:ring-offset-ink rounded-full bg-sunset px-4 py-2 text-sm font-semibold text-ink">
           Talk to us
         </a>
       </div>
@@ -37,8 +43,8 @@ export function Hero() {
       <div className={`${wrap} relative pb-28 md:pb-24`}>
         <h1 className="h-display max-w-3xl font-medium">{c.hero.tagline}</h1>
         <p className="mt-5 max-w-xl text-lg text-paper/85">{c.hero.sub}</p>
-        <a href="#about" className="mt-10 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-paper/70">
-          <span className="h-8 w-px animate-pulse bg-sunset" /> Scroll
+        <a href="#about" onClick={(e) => { e.preventDefault(); goToSection("about"); }} aria-label="Scroll to About us" className="mt-10 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-paper/70">
+          <span aria-hidden="true" className="h-8 w-px animate-pulse bg-sunset" /> Scroll
         </a>
       </div>
     </section>
@@ -105,6 +111,9 @@ function Gallery({ images, alt }: { images: string[]; alt: string }) {
   return (
     <div className="relative">
       <div
+        tabIndex={0}
+        role="region"
+        aria-label={`${alt} photos, ${images.length} image${images.length > 1 ? "s" : ""}. Use arrow keys to scroll.`}
         className="flex snap-x snap-mandatory overflow-x-auto rounded-2xl [scrollbar-width:none]"
         onScroll={(e) => setI(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
       >
@@ -114,7 +123,7 @@ function Gallery({ images, alt }: { images: string[]; alt: string }) {
       </div>
       <CurationMark size={68} className="absolute right-4 top-4 text-paper/90" />
       {images.length > 1 && (
-        <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
           {images.map((_, k) => <span key={k} className={`h-1.5 rounded-full transition-all ${k === i ? "w-5 bg-sunset" : "w-1.5 bg-paper/60"}`} />)}
         </div>
       )}
@@ -242,7 +251,7 @@ export function Organizations() {
       <div className={`${wrap} mt-20`}>
         <div className="flex flex-col items-start gap-6 rounded-3xl bg-sunset p-8 md:flex-row md:items-center md:justify-between md:p-12">
           <p className="max-w-xl font-serif text-2xl text-ink md:text-3xl">{o.cta}</p>
-          <a href={waLink(c.messages.organization)} target="_blank" rel="noreferrer" className="shrink-0 rounded-full bg-ink px-6 py-3 font-semibold text-paper">
+          <a href={waLink(c.messages.organization)} target="_blank" rel="noreferrer" aria-label={`${o.ctaButton} on WhatsApp (opens in a new tab)`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-sunset shrink-0 rounded-full bg-ink px-6 py-3 font-semibold text-paper">
             {o.ctaButton}
           </a>
         </div>
@@ -300,11 +309,11 @@ export function Closing() {
         <p className="mt-5 max-w-xl text-lg text-paper/80">{k.sub}</p>
         <div className="mt-14 grid gap-4 md:grid-cols-3">
           {k.cards.map((x) => (
-            <a key={x.title} href={waLink(c.messages[x.msg])} target="_blank" rel="noreferrer"
-              className="group rounded-2xl border border-paper/20 bg-ink/50 p-7 backdrop-blur transition hover:border-sunset">
+            <a key={x.title} href={waLink(c.messages[x.msg])} target="_blank" rel="noreferrer" aria-label={`${x.title} ${x.text} Talk to us on WhatsApp (opens in a new tab)`}
+              className="group rounded-2xl border border-paper/20 bg-ink/50 p-7 backdrop-blur transition hover:border-sunset focus-visible:border-sunset focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset">
               <h3 className="text-2xl">{x.title}</h3>
               <p className="mt-2 text-sm text-paper/70">{x.text}</p>
-              <span className="mt-6 inline-block text-sm font-semibold text-sunset">Talk to us on WhatsApp →</span>
+              <span aria-hidden="true" className="mt-6 inline-block text-sm font-semibold text-sunset">Talk to us on WhatsApp →</span>
             </a>
           ))}
         </div>
